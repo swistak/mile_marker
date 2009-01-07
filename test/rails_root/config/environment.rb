@@ -67,4 +67,5 @@ Rails::Initializer.run do |config|
 end
 
 Thoughtbot::MileMarker.environments = %w(development test)
+Thoughtbot::MileMarker.javascript_library = 'jquery'
 

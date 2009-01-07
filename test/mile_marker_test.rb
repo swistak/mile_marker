@@ -3,6 +3,10 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
 class MileMarkerTest < Test::Unit::TestCase
   include Thoughtbot::MileMarkerHelper
 
+  def setup
+    Thoughtbot::MileMarker.javascript_library = "prototype"
+  end
+
   def test_mile_helper_should_return_nothing_if_no_enabled
     Thoughtbot::MileMarker.environments = ['development']
     ENV['RAILS_ENV']="test_environment"
@@ -78,5 +82,22 @@ class MileMarkerTest < Test::Unit::TestCase
     assert_match /script/, response.body
     assert_match /z-index: 1234/, response.body
     assert_match /background-color: purple/, response.body
+  end
+
+  def test_emitting_jquery_code_when_specified_in_options
+    Thoughtbot::MileMarker.environments = ['development']
+    Thoughtbot::MileMarker.javascript_library = "jquery"
+    ENV['RAILS_ENV']="development"
+    response.body = "<head></head>"
+    add_initialize_mile_marker
+    assert_match /script/, response.body
+    # assert_match /<script.*jQuery.*<\/script/, response.body
+    assert_match /jQuery/, response.body
+  end
+
+  def test_error_is_raised_if_an_invalid_javascript_library_is_specified
+    assert_raise ArgumentError do
+      Thoughtbot::MileMarker.javascript_library = 'invalid'
+    end
   end
 end
