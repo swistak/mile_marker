@@ -15,16 +15,18 @@ module Thoughtbot
     def add_initialize_mile_marker()
       init_code = initialize_mile_marker()
       return if init_code.nil? || init_code.empty?
-      response.body.gsub! /<\/(head)>/i, init_code + '</\1>' if response.body.respond_to?(:gsub!)
+      if response.body.respond_to?(:gsub!) && !response.body["mile_marker"]
+        response.body.gsub!(/<\/(head)>/i, init_code + '</\1>')
+      end
     end
   end
     
   class MileMarker  
     # The environments in which to enable the Mile Marker functionality to run.  Defaults
     # to 'development' only.
-    @@environments = ['development']
+    @environments = ['development']
 
-    @@javascript_library = 'prototype'
+    @@javascript_library = 'jquery'
 
     class << self 
       attr_accessor :environments
